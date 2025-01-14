@@ -57,14 +57,14 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create the stream subscriber
-	sub := stream.addSubscriber(eventid, r.URL)
+	sub := stream.AddSubscriber(eventid, r.URL)
 
 	go func() {
 		<-r.Context().Done()
 
 		sub.close()
 
-		if s.AutoStream && !s.AutoReplay && stream.getSubscriberCount() == 0 {
+		if s.AutoStream && !s.AutoReplay && stream.GetSubscriberCount() == 0 {
 			s.RemoveStream(streamID)
 		}
 	}()

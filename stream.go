@@ -47,6 +47,10 @@ func newStream(id string, buffSize int, replay, isAutoStream bool, onSubscribe, 
 	}
 }
 
+func (str *Stream) GetSubscribers() []*Subscriber {
+	return str.subscribers
+}
+
 func (str *Stream) run() {
 	go func(str *Stream) {
 		for {
@@ -62,7 +66,7 @@ func (str *Stream) run() {
 			case subscriber := <-str.deregister:
 				i := str.getSubIndex(subscriber)
 				if i != -1 {
-					str.removeSubscriber(i)
+					str.RemoveSubscriber(i)
 				}
 
 				if str.OnUnsubscribe != nil {
@@ -81,7 +85,7 @@ func (str *Stream) run() {
 			// Shutdown if the server closes
 			case <-str.quit:
 				// remove connections
-				str.removeAllSubscribers()
+				str.RemoveAllSubscribers()
 				return
 			}
 		}
@@ -103,8 +107,8 @@ func (str *Stream) getSubIndex(sub *Subscriber) int {
 	return -1
 }
 
-// addSubscriber will create a new subscriber on a stream
-func (str *Stream) addSubscriber(eventid int, url *url.URL) *Subscriber {
+// AddSubscriber will create a new subscriber on a stream
+func (str *Stream) AddSubscriber(eventid int, url *url.URL) *Subscriber {
 	atomic.AddInt32(&str.subscriberCount, 1)
 	sub := &Subscriber{
 		eventid:    eventid,
@@ -126,7 +130,7 @@ func (str *Stream) addSubscriber(eventid int, url *url.URL) *Subscriber {
 	return sub
 }
 
-func (str *Stream) removeSubscriber(i int) {
+func (str *Stream) RemoveSubscriber(i int) {
 	atomic.AddInt32(&str.subscriberCount, -1)
 	close(str.subscribers[i].connection)
 	if str.subscribers[i].removed != nil {
@@ -136,7 +140,7 @@ func (str *Stream) removeSubscriber(i int) {
 	str.subscribers = append(str.subscribers[:i], str.subscribers[i+1:]...)
 }
 
-func (str *Stream) removeAllSubscribers() {
+func (str *Stream) RemoveAllSubscribers() {
 	for i := 0; i < len(str.subscribers); i++ {
 		close(str.subscribers[i].connection)
 		if str.subscribers[i].removed != nil {
@@ -148,6 +152,6 @@ func (str *Stream) removeAllSubscribers() {
 	str.subscribers = str.subscribers[:0]
 }
 
-func (str *Stream) getSubscriberCount() int {
+func (str *Stream) GetSubscriberCount() int {
 	return int(atomic.LoadInt32(&str.subscriberCount))
 }

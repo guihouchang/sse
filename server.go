@@ -73,6 +73,24 @@ func (s *Server) Close() {
 	}
 }
 
+func (s *Server) GetStreams() map[string]*Stream {
+	s.muStreams.RLock()
+	defer s.muStreams.RUnlock()
+
+	return s.streams
+}
+
+func (s *Server) GetStream(id string) *Stream {
+	s.muStreams.RLock()
+	defer s.muStreams.RUnlock()
+
+	if s.streams[id] != nil {
+		return s.streams[id]
+	}
+
+	return nil
+}
+
 // CreateStream will create a new stream and register it
 func (s *Server) CreateStream(id string) *Stream {
 	s.muStreams.Lock()

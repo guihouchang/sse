@@ -30,6 +30,9 @@ type Server struct {
 	// Enables automatic replay for each new subscriber that connects
 	AutoReplay bool
 
+	// Enables singleton mode, which means that only one client can connect to a stream at a time
+	Singleton bool
+
 	// Specifies the function to run when client subscribe or un-subscribe
 	OnSubscribe   func(streamID string, sub *Subscriber)
 	OnUnsubscribe func(streamID string, sub *Subscriber)

@@ -15,6 +15,10 @@ type Subscriber struct {
 	URL        *url.URL
 }
 
+func (s *Subscriber) GetConnection() chan *Event {
+	return s.connection
+}
+
 // Close will let the stream know that the clients connection has terminated
 func (s *Subscriber) close() {
 	s.quit <- s

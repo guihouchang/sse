@@ -57,6 +57,10 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create the stream subscriber
+	// 如果是单例模式的话，需要移除之前所有的监听者
+	if s.Singleton {
+		stream.RemoveAllSubscribers()
+	}
 	sub := stream.AddSubscriber(eventid, r.URL)
 
 	go func() {

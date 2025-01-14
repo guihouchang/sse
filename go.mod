@@ -1,4 +1,4 @@
-module github.com/r3labs/sse/v2
+module github.com/guihouchang/sse
 
 go 1.19
 

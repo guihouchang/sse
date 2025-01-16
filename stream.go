@@ -73,10 +73,6 @@ func (str *Stream) run() {
 					go str.OnUnsubscribe(str.ID, subscriber)
 				}
 
-				if str.GetSubscriberCount() == 0 {
-					str.close()
-				}
-
 			// Publish event to subscribers
 			case event := <-str.event:
 				if str.AutoReplay {
